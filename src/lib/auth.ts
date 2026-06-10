@@ -16,12 +16,15 @@ export async function fetchProfileRole(userId: string) {
   return data?.role ?? null
 }
 
-export async function createResidentProfile(userId: string, email?: string | null) {
+export async function createResidentProfile(userId: string, email?: string | null, fullName?: string | null) {
+  const nameToUse = fullName || email?.split('@')[0] || 'Resident'
+  
   const { error } = await supabase
     .from('profiles')
-    .upsert({ id: userId, email, role: 'resident' }, { onConflict: 'id' })
+    .upsert({ id: userId, email, full_name: nameToUse, role: 'resident' }, { onConflict: 'id' })
 
   if (error) {
+    console.error('Profile creation error:', error)
     return null
   }
 
