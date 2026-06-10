@@ -1,0 +1,17 @@
+.page-transition {
+  animation: page-fade-in 0.3s ease-out forwards;
+}
+
+.page-transition.transitioning {
+  animation: page-fade-in 0.3s ease-out forwards;
+}
+
+.page-transition.visible {
+  animation: page-fade-in 0.3s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}

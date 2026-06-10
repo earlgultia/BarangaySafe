@@ -1,0 +1,183 @@
+:root {
+  --bg: #f4f8fb;
+  --bg-soft: #edf4f7;
+  --surface: #ffffff;
+  --surface-muted: #f7fafc;
+  --surface-strong: #e8f0f5;
+  --card-bg: #ffffff;
+  --text: #475569;
+  --text-muted: #64748b;
+  --text-h: #111827;
+  --border: #dbe5ec;
+  --border-strong: #bfd0dc;
+  --accent: #0f766e;
+  --accent-strong: #0d9488;
+  --accent-soft: rgba(15, 118, 110, 0.1);
+  --accent-border: rgba(15, 118, 110, 0.28);
+  --blue: #2563eb;
+  --blue-soft: rgba(37, 99, 235, 0.1);
+  --amber: #f59e0b;
+  --amber-soft: rgba(245, 158, 11, 0.12);
+  --orange: #ea580c;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.1);
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.11);
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 18px 50px rgba(15, 23, 42, 0.1);
+  --ring: 0 0 0 4px rgba(13, 148, 136, 0.16);
+  --radius: 8px;
+  --control: 44px;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  color: var(--text);
+  background: var(--bg);
+  font: 16px/1.55 var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark {
+  --bg: #0f172a;
+  --bg-soft: #111827;
+  --surface: #172033;
+  --surface-muted: #111827;
+  --surface-strong: #243047;
+  --card-bg: #172033;
+  --text: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-h: #f8fafc;
+  --border: #2c3a50;
+  --border-strong: #475569;
+  --accent: #2dd4bf;
+  --accent-strong: #14b8a6;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+  --accent-border: rgba(45, 212, 191, 0.35);
+  --blue-soft: rgba(96, 165, 250, 0.12);
+  --amber-soft: rgba(245, 158, 11, 0.16);
+  --danger-soft: rgba(248, 113, 113, 0.14);
+  --success-soft: rgba(74, 222, 128, 0.13);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 20px 60px rgba(0, 0, 0, 0.34);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 45%, var(--bg) 100%);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  letter-spacing: 0;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-h);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.35rem, 2vw, 2rem);
+}
+
+h3 {
+  font-size: 1.08rem;
+}
+
+h4 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+code {
+  display: inline-flex;
+  border-radius: 6px;
+  background: var(--surface-strong);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  padding: 3px 7px;
+}
+
+img,
+svg {
+  display: block;
+}
+
+::selection {
+  background: rgba(13, 148, 136, 0.22);
+  color: var(--text-h);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
