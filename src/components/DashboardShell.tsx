@@ -172,7 +172,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
             <ShieldCheck strokeWidth={2} />
           </div>
           <div>
-            <p>SafeBarangay</p>
+            <p>eAmping</p>
             <span>Community dashboard</span>
           </div>
         </div>

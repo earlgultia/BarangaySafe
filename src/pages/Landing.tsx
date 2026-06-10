@@ -1,25 +1,59 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertCircle, Map, Bell, Users, BarChart3, Shield } from 'lucide-react'
-import { ThemeToggle } from '../components/ThemeToggle'
+import { AlertCircle, Map, Bell, Users, BarChart3, Shield, Menu, X } from 'lucide-react'
 
 export default function Landing() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <div className="landing-page">
       <nav className="landing-header" aria-label="Landing page navigation">
         <div className="landing-container">
+          <button
+            type="button"
+            className="landing-mobile-toggle"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((current) => !current)}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
           <div className="landing-header-links">
             <a href="#features">Key Features</a>
             <a href="#roles">For Every Role</a>
             <a href="#get-started">Get Started Today</a>
           </div>
+
           <div className="landing-header-actions">
-            <ThemeToggle />
             <Link to="/auth/login" className="button button-primary">
               Sign In
             </Link>
             <Link to="/auth/register" className="button button-secondary">
               Create Account
             </Link>
+          </div>
+
+          <div className={`landing-mobile-menu${menuOpen ? ' open' : ''}`}>
+            <div className="landing-mobile-links">
+              <a href="#features" onClick={() => setMenuOpen(false)}>
+                Key Features
+              </a>
+              <a href="#roles" onClick={() => setMenuOpen(false)}>
+                For Every Role
+              </a>
+              <a href="#get-started" onClick={() => setMenuOpen(false)}>
+                Get Started Today
+              </a>
+            </div>
+            <div className="landing-mobile-actions">
+              <Link to="/auth/login" className="button button-primary">
+                Sign In
+              </Link>
+              <Link to="/auth/register" className="button button-secondary">
+                Create Account
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -32,7 +66,7 @@ export default function Landing() {
               <div className="hero-icon">
                 <Shield size={32} />
               </div>
-              <h1>SafeBarangay</h1>
+              <h1>eAmping</h1>
               <p className="hero-tagline">Community Emergency Response System</p>
             </div>
             <p className="hero-description">
@@ -144,7 +178,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="landing-container">
-          <p>SafeBarangay © 2026 — Community Emergency Response System</p>
+          <p>eAmping © 2026 — Community Emergency Response System</p>
           <div className="footer-links">
             <a href="#features">Features</a>
             <a href="#roles">Roles</a>
@@ -152,6 +186,7 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
     </div>
   )
 }

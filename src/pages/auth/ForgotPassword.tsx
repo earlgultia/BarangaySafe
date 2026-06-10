@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
               <ShieldCheck size={22} />
             </div>
             <div>
-              <strong>SafeBarangay</strong>
+              <strong>eAmping</strong>
               <span>Community Emergency System</span>
             </div>
           </div>
