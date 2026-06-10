@@ -29,7 +29,7 @@ type IncidentReport = {
   image_url?: string
   latitude: number
   longitude: number
-  status: string
+  status: 'pending' | 'verified' | 'resolved' | 'rejected'
   created_at: string
 }
 

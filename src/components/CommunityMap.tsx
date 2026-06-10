@@ -104,7 +104,7 @@ export default function CommunityMap() {
   }, [])
 
   const mapCenter = useMemo<LatLngExpression>(() => {
-    const points: LatLngExpression[] = []
+    const points: [number, number][] = []
     centers.forEach((item) => points.push([item.latitude, item.longitude]))
     assemblyPoints.forEach((item) => points.push([item.latitude, item.longitude]))
     incidentReports.forEach((item) => points.push([item.latitude, item.longitude]))
@@ -113,8 +113,8 @@ export default function CommunityMap() {
       return [14.5995, 120.9842]
     }
 
-    const avgLat = points.reduce((sum, point) => sum + (point[0] as number), 0) / points.length
-    const avgLng = points.reduce((sum, point) => sum + (point[1] as number), 0) / points.length
+    const avgLat = points.reduce((sum, point) => sum + point[0], 0) / points.length
+    const avgLng = points.reduce((sum, point) => sum + point[1], 0) / points.length
     return [avgLat, avgLng]
   }, [assemblyPoints, centers, incidentReports])
 

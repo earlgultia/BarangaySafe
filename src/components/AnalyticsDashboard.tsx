@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import {
   Bar,
   BarChart,
@@ -24,7 +23,7 @@ import {
   type CategoryPoint,
   type IncidentTrendPoint,
 } from '../lib/analytics'
-import { fetchReliefDistributions, type ReliefDistributionRecord } from '../lib/relief'
+import { fetchReliefDistributions } from '../lib/relief'
 
 const counterItems = [
   { label: 'Total Residents', key: 'totalResidents' },
@@ -90,16 +89,16 @@ export default function AnalyticsDashboard() {
       }
 
       setCounts({
-        totalResidents: countsResult.totalResidents,
-        openIncidents: countsResult.openIncidents,
-        activeAlerts: countsResult.activeAlerts,
-        evacuationCenters: countsResult.evacuationCenters,
+        totalResidents: countsResult.totalResidents ?? 0,
+        openIncidents: countsResult.openIncidents ?? 0,
+        activeAlerts: countsResult.activeAlerts ?? 0,
+        evacuationCenters: countsResult.evacuationCenters ?? 0,
       })
-      setIncidentTrends(incidentResult.data)
-      setDisasterFrequency(disasterResult.data)
-      setPopulationBreakdown(populationResult.data)
+      setIncidentTrends(incidentResult.data ?? [])
+      setDisasterFrequency(disasterResult.data ?? [])
+      setPopulationBreakdown(populationResult.data ?? [])
       setReliefDistribution(
-        reliefResult.data.reduce<Record<string, number>>((acc, entry) => {
+        (reliefResult.data ?? []).reduce<Record<string, number>>((acc, entry) => {
           const status = entry.claim_status ?? 'Unknown'
           acc[status] = (acc[status] ?? 0) + 1
           return acc
@@ -169,7 +168,7 @@ export default function AnalyticsDashboard() {
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="count" fill="#f97316">
-                    {disasterFrequency.map((entry, index) => (
+                    {disasterFrequency.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#f97316' : '#fb923c'} />
                     ))}
                   </Bar>
@@ -186,7 +185,7 @@ export default function AnalyticsDashboard() {
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="count" fill="#2563eb">
-                    {reliefChartData.map((entry, index) => (
+                    {reliefChartData.map((_, index) => (
                       <Cell key={`cell-relief-${index}`} fill={index % 2 === 0 ? '#2563eb' : '#60a5fa'} />
                     ))}
                   </Bar>
