@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon-modern.svg'],
       manifest: {
         name: 'SafeBarangay',
         short_name: 'SafeBarangay',
@@ -19,7 +19,7 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'favicon.svg',
+            src: 'favicon-modern.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',

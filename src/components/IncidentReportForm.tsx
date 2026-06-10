@@ -1,40 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send } from 'lucide-react'
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
-import type { LatLngExpression } from 'leaflet'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import { supabase } from '../lib/supabase'
 import { createIncidentReport, fetchIncidentReportsForUser, uploadIncidentPhoto } from '../lib/incident'
 
-const defaultCenter: LatLngExpression = [14.5995, 120.9842]
-
-const markerIcon = new L.Icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
-
-function LocationPicker({ setLocation }: { setLocation: (value: { latitude: number; longitude: number }) => void }) {
-  useMapEvents({
-    click(event) {
-      setLocation({ latitude: event.latlng.lat, longitude: event.latlng.lng })
-    },
-  })
-
-  return null
-}
+const defaultCoordinates = { latitude: 14.5995, longitude: 120.9842 }
 
 export default function IncidentReportForm() {
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
+  const [address, setAddress] = useState('')
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -69,11 +45,6 @@ export default function IncidentReportForm() {
     })
   }, [userId])
 
-  const locationLabel = useMemo(() => {
-    if (!location) return 'Tap the map to pin the incident location.'
-    return `Pinned location: ${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`
-  }, [location])
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setErrorMessage(null)
@@ -89,8 +60,8 @@ export default function IncidentReportForm() {
       return
     }
 
-    if (!location) {
-      setErrorMessage('Pin the incident location on the map.')
+    if (!address.trim()) {
+      setErrorMessage('Enter the incident address.')
       return
     }
 
@@ -106,8 +77,9 @@ export default function IncidentReportForm() {
         user_id: userId,
         description: description.trim(),
         image_url: imageUrl,
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: defaultCoordinates.latitude,
+        longitude: defaultCoordinates.longitude,
+        address: address.trim(),
       })
 
       if (error) {
@@ -117,14 +89,13 @@ export default function IncidentReportForm() {
       setStatusMessage('Incident report submitted successfully. Staff will review it shortly.')
       setDescription('')
       setFile(null)
-      setLocation(null)
+      setAddress('')
       setReports((current) => [
         {
           id: Date.now(),
           description,
           image_url: imageUrl,
-          latitude: location.latitude,
-          longitude: location.longitude,
+          address: address.trim(),
           status: 'pending',
           created_at: new Date().toISOString(),
         },
@@ -150,7 +121,7 @@ export default function IncidentReportForm() {
           <p className="report-subtitle">Incident Reporting</p>
           <h2>Submit a new incident</h2>
           <p className="report-copy">
-            Upload a photo, describe the issue, and pin the exact location so staff can verify quickly.
+            Upload a photo, describe the issue, and provide the exact address so staff can verify quickly.
           </p>
         </div>
       </div>
@@ -183,23 +154,16 @@ export default function IncidentReportForm() {
           )}
         </label>
 
-        <div className="map-block">
-          <div className="map-header">
-            <span>Pin location</span>
-            <small>{locationLabel}</small>
-          </div>
-          <MapContainer
-            center={defaultCenter}
-            zoom={12}
-            style={{ width: '100%', height: '320px', borderRadius: '24px', overflow: 'hidden' }}
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LocationPicker setLocation={setLocation} />
-            {location ? (
-              <Marker position={[location.latitude, location.longitude]} icon={markerIcon} />
-            ) : null}
-          </MapContainer>
-        </div>
+        <label className="form-row">
+          <span>Location address</span>
+          <input
+            type="text"
+            value={address}
+            onChange={(event) => setAddress(event.target.value)}
+            placeholder="Enter the exact address of the incident."
+          />
+          <small>Provide a detailed address so staff can quickly locate and verify the issue.</small>
+        </label>
 
         <div className="report-actions">
           <button type="submit" className="submit-button" disabled={loading}>

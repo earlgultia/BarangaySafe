@@ -6,6 +6,7 @@ export type IncidentReportPayload = {
   image_url?: string
   latitude: number
   longitude: number
+  address?: string
 }
 
 export async function uploadIncidentPhoto(userId: string, file: File) {
@@ -42,6 +43,7 @@ export async function createIncidentReport(report: IncidentReportPayload) {
         image_url: report.image_url,
         latitude: report.latitude,
         longitude: report.longitude,
+        address: report.address,
         status: 'pending',
       },
     ])

@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Landing from './pages/Landing'
 import LoginPage from './pages/auth/Login'
 import RegisterPage from './pages/auth/Register'
@@ -7,6 +7,9 @@ import ResetPasswordPage from './pages/auth/ResetPassword'
 import ResidentPage from './pages/Resident'
 import StaffPage from './pages/Staff'
 import AdminPage from './pages/Admin'
+import AnnouncementFeed from './components/AnnouncementFeed'
+import EvacuationCenters from './components/EvacuationCenters'
+import IncidentReportForm from './components/IncidentReportForm'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardShell from './components/DashboardShell'
 import { AuthProvider } from './contexts/AuthContext'
@@ -29,11 +32,16 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['resident']}>
                 <DashboardShell title="Resident Dashboard">
-                  <ResidentPage />
+                  <Outlet />
                 </DashboardShell>
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<ResidentPage />} />
+            <Route path="announcements" element={<AnnouncementFeed />} />
+            <Route path="evacuation" element={<EvacuationCenters />} />
+            <Route path="report" element={<IncidentReportForm />} />
+          </Route>
           <Route
             path="/staff"
             element={

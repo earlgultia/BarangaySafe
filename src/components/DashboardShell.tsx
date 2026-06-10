@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ShieldCheck, LayoutDashboard, Bell, User, Settings } from 'lucide-react'
+import { ShieldCheck, LayoutDashboard, Bell, User, Settings, MapPin, AlertCircle, Menu, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import AlertBanner from './AlertBanner'
 import AlertToast from './AlertToast'
+import BrandLogo from './BrandLogo'
 import FullscreenAlertModal from './FullscreenAlertModal'
 import NotificationToast, { type NotificationItem } from './NotificationToast'
 import { fetchActiveAlerts, subscribeToAlerts, type EmergencyAlert } from '../lib/alerts'
@@ -18,6 +19,9 @@ interface DashboardShellProps {
 
 const navItems = [
   { title: 'Resident Overview', path: '/resident', icon: LayoutDashboard, roles: ['resident'] },
+  { title: 'Announcements', path: '/resident/announcements', icon: Bell, roles: ['resident'] },
+  { title: 'Evacuation Centers', path: '/resident/evacuation', icon: MapPin, roles: ['resident'] },
+  { title: 'Report Incident', path: '/resident/report', icon: AlertCircle, roles: ['resident'] },
   { title: 'Staff Workspace', path: '/staff', icon: ShieldCheck, roles: ['staff'] },
   { title: 'Admin Command', path: '/admin', icon: Settings, roles: ['admin'] },
 ]
@@ -27,6 +31,8 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
   const navigate = useNavigate()
   const { role, user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [logoutOpen, setLogoutOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notificationOpen, setNotificationOpen] = useState(false)
   const [alerts, setAlerts] = useState<EmergencyAlert[]>([])
   const [toastAlert, setToastAlert] = useState<EmergencyAlert | null>(null)
@@ -42,6 +48,8 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
     () => navItems.filter((navItem) => (role ? navItem.roles.includes(role) : true)),
     [role],
   )
+  const activeNavItem = visibleNavItems.find((navItem) => navItem.path === activePath)
+  const pageTitle = activeNavItem?.title ?? title
   const roleLabel = role ? `${role.charAt(0).toUpperCase()}${role.slice(1)}` : title.replace(' Dashboard', '')
   const accountLabel = user?.email ?? roleLabel
 
@@ -149,27 +157,41 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
     return () => window.clearTimeout(timeout)
   }, [toastNotification])
 
-  async function handleSignOut() {
+  const userMenuItems = [
+    { label: accountLabel, action: () => undefined },
+    { label: 'Sign out', action: () => { setMenuOpen(false); setLogoutOpen(true); } },
+  ]
+
+  async function confirmSignOut() {
+    setLogoutOpen(false)
     await signOut()
     navigate('/auth/login', { replace: true })
   }
 
-  const userMenuItems = [
-    { label: accountLabel, action: () => undefined },
-    { label: 'Sign out', action: handleSignOut },
-  ]
-
   return (
     <div className="dashboard-shell">
+      <AnimatePresence>
+        {sidebarOpen ? (
+          <motion.div
+            className="sidebar-overlay show"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setSidebarOpen(false)}
+          />
+        ) : null}
+      </AnimatePresence>
+
       <motion.aside
-        className="dashboard-sidebar"
+        className={`dashboard-sidebar ${sidebarOpen ? 'mobile-open' : ''}`}
         initial={{ opacity: 0, x: -80 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
         <div className="sidebar-brand">
           <div className="brand-icon">
-            <ShieldCheck strokeWidth={2} />
+            <BrandLogo size={34} />
           </div>
           <div>
             <p>eAmping</p>
@@ -187,6 +209,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
                 key={navItem.path}
                 to={navItem.path}
                 className={`sidebar-link ${isActive ? 'active' : ''}`}
+                onClick={() => setSidebarOpen(false)}
               >
                 <Icon className="sidebar-icon" />
                 <span>{navItem.title}</span>
@@ -224,7 +247,21 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
         >
           <div>
             <p className="topbar-subtitle">Welcome back</p>
-            <h1>{title}</h1>
+            <h1>{pageTitle}</h1>
+          </div>
+
+          <div className="topbar-toggle-left">
+            <motion.button
+              type="button"
+              className="sidebar-toggle"
+              aria-label="Toggle sidebar"
+              title="Toggle sidebar"
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              onClick={() => setSidebarOpen((state) => !state)}
+            >
+              {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+            </motion.button>
           </div>
 
           <div className="topbar-actions">
@@ -320,6 +357,32 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
                 ) : null}
               </AnimatePresence>
             </div>
+            <AnimatePresence>
+              {logoutOpen ? (
+                <motion.div
+                  className="logout-confirm-overlay"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <motion.div
+                    className="logout-confirm-modal"
+                    initial={{ scale: 0.96, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.96, opacity: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                  >
+                    <h3>Are you sure you want to logout?</h3>
+                    <p className="muted">You will be signed out of your account.</p>
+                    <div className="confirm-actions">
+                      <button type="button" className="button-outline" onClick={() => setLogoutOpen(false)}>No</button>
+                      <button type="button" className="submit-button" onClick={() => { void confirmSignOut() }}>Yes</button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         </motion.header>
 
@@ -329,7 +392,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: 'easeOut' }}
         >
-          {children}
+          {children ?? <Outlet />}
         </motion.main>
       </div>
     </div>
