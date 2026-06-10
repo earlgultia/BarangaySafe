@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, LockKeyhole, Mail, RotateCcw } from 'lucide-react'
+import { ArrowRight, LockKeyhole, Mail } from 'lucide-react'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
-import { fetchProfileRole, getRouteForRole } from '../../lib/auth'
+import { fetchProfileRole, createResidentProfile, getRouteForRole } from '../../lib/auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -43,33 +43,14 @@ export default function LoginPage() {
       return
     }
 
-    const role = await fetchProfileRole(user.id)
-    if (!role) {
-      setError('No role found for this account. Contact support.')
-      return
+    const fetchedRole = await fetchProfileRole(user.id)
+    const role = fetchedRole ?? (await createResidentProfile(user.id, user.email)) ?? 'resident'
+
+    if (!fetchedRole) {
+      console.warn('Fallback to resident role for user', user.id)
     }
 
     navigate(getRouteForRole(role))
-  }
-
-  async function handleResendVerification() {
-    setLoading(true)
-    setError(null)
-    setStatus(null)
-
-    const { error: resendError } = await supabase.auth.resend({
-      type: 'signup',
-      email,
-    })
-
-    setLoading(false)
-
-    if (resendError) {
-      setError(resendError.message)
-      return
-    }
-
-    setStatus('Verification email resent. Check your inbox.')
   }
 
   return (
@@ -129,15 +110,11 @@ export default function LoginPage() {
             <Link to="/auth/forgot-password">Forgot password?</Link>
           </div>
 
-          <button
-            className="auth-secondary-button"
-            type="button"
-            onClick={handleResendVerification}
-            disabled={loading || !email}
-          >
-            <RotateCcw size={16} />
-            <span>Resend verification email</span>
-          </button>
+          <div className="auth-action-row">
+            <Link to="/" className="auth-secondary-button">
+              Back to landing page
+            </Link>
+          </div>
         </motion.section>
       </section>
     </main>

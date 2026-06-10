@@ -7,13 +7,25 @@ export async function fetchProfileRole(userId: string) {
     .from('profiles')
     .select('role')
     .eq('id', userId)
-    .single()
+    .maybeSingle()
 
-  if (error || !data?.role) {
+  if (error) {
     return null
   }
 
-  return data.role as UserRole
+  return data?.role ?? null
+}
+
+export async function createResidentProfile(userId: string, email?: string | null) {
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({ id: userId, email, role: 'resident' }, { onConflict: 'id' })
+
+  if (error) {
+    return null
+  }
+
+  return 'resident' as UserRole
 }
 
 export function getRouteForRole(role: string | null) {

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, LockKeyhole, Mail } from 'lucide-react'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
+import { createResidentProfile } from '../../lib/auth'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -33,12 +34,9 @@ export default function RegisterPage() {
     }
 
     if (data?.user) {
-      await supabase.from('profiles').upsert({
-        id: data.user.id,
-        email,
-        role: 'resident',
-      })
-
+      await createResidentProfile(data.user.id, email)
+      setStatus('Registration successful. Check your email to verify your account.')
+    } else {
       setStatus('Registration successful. Check your email to verify your account.')
     }
 

@@ -1392,6 +1392,13 @@ input[type="checkbox"] {
   flex-wrap: wrap;
 }
 
+.auth-action-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
 .auth-secondary-button {
   min-height: var(--control);
   display: inline-flex;
