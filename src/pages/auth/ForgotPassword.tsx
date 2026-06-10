@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Mail, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Mail } from 'lucide-react'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 
@@ -33,45 +33,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <main className="auth-page">
-      <section className="auth-shell">
-        <motion.aside
-          className="auth-brand-panel"
-          initial={{ opacity: 0, x: -18 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        >
-          <div className="auth-brand">
-            <div className="brand-icon">
-              <ShieldCheck size={22} />
-            </div>
-            <div>
-              <strong>eAmping</strong>
-              <span>Community Emergency System</span>
-            </div>
-          </div>
-
-          <div className="auth-brand-copy">
-            <p className="report-subtitle">Account recovery</p>
-            <h1>Recover access quickly</h1>
-            <p>Request a reset link and return to the dashboard after updating your password.</p>
-          </div>
-
-          <div className="auth-metric-row">
-            <div className="auth-metric">
-              <strong>Reset</strong>
-              <span>Email</span>
-            </div>
-            <div className="auth-metric">
-              <strong>Verify</strong>
-              <span>Inbox</span>
-            </div>
-            <div className="auth-metric">
-              <strong>Return</strong>
-              <span>Login</span>
-            </div>
-          </div>
-        </motion.aside>
-
+      <section className="auth-shell auth-shell-single">
         <motion.section
           className="auth-card"
           initial={{ opacity: 0, y: 18 }}

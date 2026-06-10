@@ -139,6 +139,7 @@ export default function IncidentReportForm() {
 
   return (
     <motion.section
+      id="incident-form"
       className="incident-report-panel"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
