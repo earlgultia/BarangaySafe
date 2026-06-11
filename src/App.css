@@ -1547,7 +1547,35 @@ input[type="checkbox"] {
 }
 
 .auth-field input {
-  padding-left: 42px;
+  padding: 10px 44px 10px 42px;
+}
+
+.auth-field-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  z-index: 2;
+}
+
+.auth-field-toggle:hover,
+.auth-field-toggle:focus-visible {
+  color: var(--text-h);
+}
+
+.auth-field-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .auth-card .auth-links {
@@ -2084,6 +2112,22 @@ input[type="checkbox"] {
 
 html.dark {
   color-scheme: dark;
+}
+
+html.dark .resident-hero {
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.08) 0%, rgba(23, 32, 51, 0.92) 100%);
+  border-color: rgba(45, 212, 191, 0.18);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+}
+
+html.dark .resident-hero-copy h2,
+html.dark .resident-hero-copy p,
+html.dark .resident-hero-copy .report-subtitle {
+  color: var(--text);
+}
+
+html.dark .resident-hero-copy h2 {
+  color: var(--text-h);
 }
 
 html.light {

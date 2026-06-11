@@ -79,6 +79,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme])
 
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('theme', newTheme)
