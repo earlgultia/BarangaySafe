@@ -1821,11 +1821,11 @@ input[type="checkbox"] {
 }
 
 .hero-description {
-  font-size: 1.1rem;
-  line-height: 1.7;
+  font-size: 1.05rem;
+  line-height: 1.8;
   color: var(--text);
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 680px;
+  margin: 0;
 }
 
 .hero-actions {
@@ -1833,6 +1833,134 @@ input[type="checkbox"] {
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+  justify-content: center;
+}
+
+.hero-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.hero-grid {
+  display: grid;
+  place-items: center;
+  gap: 32px;
+  align-items: center;
+  padding-top: 40px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 22px;
+  justify-items: center;
+  text-align: center;
+}
+
+.hero-phone-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.hero-phone-header p {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.hero-phone-header strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--text-h);
+  line-height: 1.4;
+}
+
+.hero-phone-status {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.hero-phone-list {
+  display: grid;
+  gap: 16px;
+}
+
+.hero-phone-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  background: white;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.hero-phone-item-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--accent);
+}
+
+.hero-phone-item strong {
+  display: block;
+  font-size: 0.98rem;
+  margin-bottom: 4px;
+}
+
+.hero-phone-item p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.hero-phone-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-phone-pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.button-small {
+  padding: 10px 20px;
+  font-size: 0.95rem;
 }
 
 .button {
@@ -2249,6 +2377,36 @@ html.light {
   .landing-mobile-actions .theme-toggle {
     width: 100%;
     max-width: none;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .hero-copy {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero-visual {
+    justify-content: center;
+  }
+
+  .hero-phone-card {
+    width: 100%;
+  }
+
+  .hero-phone-footer {
+    justify-content: center;
+  }
+
+  .hero-badges {
+    justify-content: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
   }
 
   .landing-mobile-menu.open {

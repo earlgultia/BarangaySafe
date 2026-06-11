@@ -61,18 +61,37 @@ export default function Landing() {
       {/* Hero Section */}
       <header className="landing-hero">
         <div className="landing-container">
-          <div className="hero-content">
-            <div className="hero-brand">
-              <div className="hero-icon">
-                <Shield size={32} />
+          <div className="hero-grid">
+            <div className="hero-copy">
+              <div className="hero-brand">
+                <div className="hero-icon">
+                  <Shield size={32} />
+                </div>
+                <h1>eAmping</h1>
+                <p className="hero-tagline">Community Emergency Response System</p>
               </div>
-              <h1>eAmping</h1>
-              <p className="hero-tagline">Community Emergency Response System</p>
+
+              <p className="hero-description">
+                Real-time alerts, incident tracking, evacuation coordination, and relief distribution
+                all in one secure platform for safer communities.
+              </p>
+
+              <div className="hero-actions">
+                <Link to="/auth/login" className="button button-primary">
+                  Open Dashboard
+                </Link>
+                <Link to="/auth/register" className="button button-secondary">
+                  Join Your Community
+                </Link>
+              </div>
+
+              <div className="hero-badges">
+                <span>Mobile-first emergency response</span>
+                <span>Live incident tracking</span>
+                <span>Secure role-based access</span>
+              </div>
             </div>
-            <p className="hero-description">
-              Real-time alerts, incident tracking, evacuation coordination, and relief distribution
-              all in one secure platform for safer communities.
-            </p>
+
           </div>
         </div>
       </header>
