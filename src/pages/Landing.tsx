@@ -198,6 +198,7 @@ export default function Landing() {
       <footer className="landing-footer">
         <div className="landing-container">
           <p>eAmping © 2026 — Community Emergency Response System</p>
+          <p className="footer-developer">Developed by: EARL OCIONES GULTIA</p>
           <div className="footer-links">
             <a href="#features">Features</a>
             <a href="#roles">Roles</a>
