@@ -904,15 +904,6 @@
   }
 }
 
-  .mobile-action-card {
-    padding: 16px;
-  }
-
-  .resident-summary-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .signout-button,
 .submit-button,
 .button-secondary,
