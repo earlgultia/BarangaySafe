@@ -89,6 +89,15 @@ export async function createResidentProfile(userId: string, email?: string | nul
   return 'resident' as UserRole
 }
 
+export async function ensureResidentProfile(userId: string, email?: string | null, fullName?: string | null) {
+  const fetchedRole = await fetchProfileRole(userId)
+  if (fetchedRole) {
+    return fetchedRole
+  }
+
+  return await createResidentProfile(userId, email, fullName)
+}
+
 export function getRouteForRole(role: string | null) {
   switch (role?.toLowerCase()) {
     case 'staff':

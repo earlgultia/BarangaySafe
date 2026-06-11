@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
-import { fetchProfileRole, createResidentProfile, getRouteForRole } from '../../lib/auth'
+import { ensureResidentProfile, getRouteForRole } from '../../lib/auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -43,13 +43,7 @@ export default function LoginPage() {
       return
     }
 
-    const fetchedRole = await fetchProfileRole(user.id)
-    const role = fetchedRole ?? (await createResidentProfile(user.id, user.email)) ?? 'resident'
-
-    if (!fetchedRole) {
-      console.warn('Fallback to resident role for user', user.id)
-    }
-
+    const role = (await ensureResidentProfile(user.id, user.email)) ?? 'resident'
     navigate(getRouteForRole(role))
   }
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader } from 'lucide-react'
-import { fetchUserProfile, updateUserProfile, type UserProfile } from '../lib/auth'
+import { fetchUserProfile, updateUserProfile } from '../lib/auth'
 import { useAuth } from '../contexts/AuthContext'
 
 interface EditProfileModalProps {
@@ -11,7 +11,6 @@ interface EditProfileModalProps {
 
 export default function EditProfileModal({ open, onClose }: EditProfileModalProps) {
   const { user } = useAuth()
-  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
@@ -37,7 +36,6 @@ export default function EditProfileModal({ open, onClose }: EditProfileModalProp
     setLoading(false)
 
     if (profileData) {
-      setProfile(profileData)
       setFormData({
         full_name: profileData.full_name || '',
         email: profileData.email || '',

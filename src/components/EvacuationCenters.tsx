@@ -62,7 +62,7 @@ export default function EvacuationCenters() {
 
       if (!centersError && centersData) {
         // Calculate distance for each center if user location is available
-        let sortedCenters = centersData
+        let sortedCenters = centersData as any[]
         if (userCoords) {
           sortedCenters = centersData.map((center) => ({
             ...center,

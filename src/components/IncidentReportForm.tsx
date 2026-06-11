@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { createIncidentReport, fetchIncidentReportsForUser, uploadIncidentPhoto } from '../lib/incident'
 
 const defaultCoordinates = { latitude: 14.5995, longitude: 120.9842 }
 
 export default function IncidentReportForm() {
+  const { user } = useAuth()
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -15,13 +17,16 @@ export default function IncidentReportForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [reports, setReports] = useState<any[]>([])
-  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setUserId(data?.session?.user?.id ?? null)
+    if (!user?.id) return
+
+    fetchIncidentReportsForUser(user.id).then(({ data, error }) => {
+      if (!error && data) {
+        setReports(data)
+      }
     })
-  }, [])
+  }, [user?.id])
 
   useEffect(() => {
     if (!file) {
@@ -35,22 +40,12 @@ export default function IncidentReportForm() {
     return () => URL.revokeObjectURL(objectUrl)
   }, [file])
 
-  useEffect(() => {
-    if (!userId) return
-
-    fetchIncidentReportsForUser(userId).then(({ data, error }) => {
-      if (!error && data) {
-        setReports(data)
-      }
-    })
-  }, [userId])
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setErrorMessage(null)
     setStatusMessage(null)
 
-    if (!userId) {
+    if (!user?.id) {
       setErrorMessage('Unable to determine your profile. Please refresh and try again.')
       return
     }
@@ -65,16 +60,35 @@ export default function IncidentReportForm() {
       return
     }
 
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError) {
+      console.error('Session check failed:', sessionError)
+      setErrorMessage('Unable to verify your authentication session. Please refresh and try again.')
+      return
+    }
+
+    const sessionUserId = sessionData?.session?.user?.id
+    if (!sessionUserId) {
+      setErrorMessage('Your authentication session is no longer valid. Please sign out and sign back in.')
+      return
+    }
+
+    if (sessionUserId !== user.id) {
+      console.error('Auth mismatch:', { sessionUserId, contextUserId: user.id })
+      setErrorMessage('Authentication mismatch detected. Please refresh and try again.')
+      return
+    }
+
     setLoading(true)
 
     try {
       let imageUrl: string | undefined
       if (file) {
-        imageUrl = await uploadIncidentPhoto(userId, file)
+        imageUrl = await uploadIncidentPhoto(sessionUserId, file)
       }
 
       const { error } = await createIncidentReport({
-        user_id: userId,
+        user_id: sessionUserId,
         description: description.trim(),
         image_url: imageUrl,
         latitude: defaultCoordinates.latitude,

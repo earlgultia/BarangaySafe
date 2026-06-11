@@ -51,7 +51,6 @@ export async function createIncidentReport(report: IncidentReportPayload) {
         status: 'pending',
       },
     ])
-    .select()
 
   return { data, error }
 }

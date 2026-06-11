@@ -33,12 +33,11 @@ export default function RegisterPage() {
       return
     }
 
-    if (data?.user) {
-      await createResidentProfile(data.user.id, email)
-      setStatus('Registration successful. Check your email to verify your account.')
-    } else {
-      setStatus('Registration successful. Check your email to verify your account.')
+    const user = data?.user ?? data?.session?.user
+    if (user) {
+      await createResidentProfile(user.id, email)
     }
+    setStatus('Registration successful. Check your email to verify your account.')
 
     setLoading(false)
   }

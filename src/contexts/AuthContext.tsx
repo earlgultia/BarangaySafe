@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
-import { fetchProfileRole, createResidentProfile, getRouteForRole, type UserRole } from '../lib/auth'
+import { ensureResidentProfile, getRouteForRole, type UserRole } from '../lib/auth'
 import type { Session, User } from '@supabase/supabase-js'
 
 interface AuthContextValue {
@@ -32,13 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(currentSession?.user ?? null)
 
       if (currentSession?.user?.id) {
-        const fetchedRole = await fetchProfileRole(currentSession.user.id)
-        const profileRole = fetchedRole ?? (await createResidentProfile(currentSession.user.id, currentSession.user.email)) ?? 'resident'
-
-        if (!fetchedRole) {
-          console.warn('Fallback to resident role during auth init for user', currentSession.user.id)
-        }
-
+        const profileRole = (await ensureResidentProfile(currentSession.user.id, currentSession.user.email)) ?? 'resident'
         if (!mounted) return
         setRole(profileRole)
       }
@@ -55,13 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(sessionValue?.user ?? null)
 
         if (sessionValue?.user?.id) {
-          const fetchedRole = await fetchProfileRole(sessionValue.user.id)
-          const profileRole = fetchedRole ?? (await createResidentProfile(sessionValue.user.id, sessionValue.user.email)) ?? 'resident'
-
-          if (!fetchedRole) {
-            console.warn('Fallback to resident role during auth state change for user', sessionValue.user.id)
-          }
-
+          const profileRole = (await ensureResidentProfile(sessionValue.user.id, sessionValue.user.email)) ?? 'resident'
           setRole(profileRole)
         } else {
           setRole(null)
