@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Mail } from 'lucide-react'
-import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 
 export default function ForgotPasswordPage() {
@@ -46,7 +45,6 @@ export default function ForgotPasswordPage() {
               <h2>Send reset email</h2>
               <p>Enter the email address connected to your account.</p>
             </div>
-            <ThemeToggle />
           </div>
 
           <form onSubmit={handleSubmit}>

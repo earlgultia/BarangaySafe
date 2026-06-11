@@ -21,6 +21,10 @@ export async function uploadIncidentPhoto(userId: string, file: File) {
     })
 
   if (uploadError) {
+    const message = uploadError.message?.toString() ?? ''
+    if (message.includes('Bucket not found') || message.includes('bucket not found')) {
+      return undefined
+    }
     throw uploadError
   }
 

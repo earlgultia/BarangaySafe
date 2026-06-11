@@ -9,8 +9,8 @@ import AlertToast from './AlertToast'
 import BrandLogo from './BrandLogo'
 import FullscreenAlertModal from './FullscreenAlertModal'
 import NotificationToast, { type NotificationItem } from './NotificationToast'
+import EditProfileModal from './EditProfileModal'
 import { fetchActiveAlerts, subscribeToAlerts, type EmergencyAlert } from '../lib/alerts'
-import { ThemeToggle } from './ThemeToggle'
 
 interface DashboardShellProps {
   title: string
@@ -32,6 +32,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
   const { role, user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notificationOpen, setNotificationOpen] = useState(false)
   const [alerts, setAlerts] = useState<EmergencyAlert[]>([])
@@ -158,7 +159,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
   }, [toastNotification])
 
   const userMenuItems = [
-    { label: accountLabel, action: () => undefined },
+    { label: accountLabel, action: () => { setMenuOpen(false); setEditProfileOpen(true); } },
     { label: 'Sign out', action: () => { setMenuOpen(false); setLogoutOpen(true); } },
   ]
 
@@ -265,8 +266,6 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
           </div>
 
           <div className="topbar-actions">
-            <ThemeToggle />
-
             <motion.button
               type="button"
               className="icon-button"
@@ -395,6 +394,7 @@ export default function DashboardShell({ title, children }: DashboardShellProps)
           {children ?? <Outlet />}
         </motion.main>
       </div>
+      <EditProfileModal open={editProfileOpen} onClose={() => setEditProfileOpen(false)} />
     </div>
   )
 }

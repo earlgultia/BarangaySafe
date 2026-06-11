@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
-import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 import { fetchProfileRole, createResidentProfile, getRouteForRole } from '../../lib/auth'
 
@@ -69,7 +68,6 @@ export default function LoginPage() {
               <h2>Access your dashboard</h2>
               <p>Use your verified account email and password.</p>
             </div>
-            <ThemeToggle />
           </div>
 
           <form onSubmit={handleSubmit}>

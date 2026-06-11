@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
-import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 import { createResidentProfile } from '../../lib/auth'
 
@@ -59,7 +58,6 @@ export default function RegisterPage() {
               <h2>Create resident account</h2>
               <p>Use an active email address for verification.</p>
             </div>
-            <ThemeToggle />
           </div>
 
           <form onSubmit={handleSubmit}>

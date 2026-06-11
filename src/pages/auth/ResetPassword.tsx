@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Lock, CheckCircle, AlertCircle } from 'lucide-react'
-import { ThemeToggle } from '../../components/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 
 export default function ResetPasswordPage() {
@@ -106,7 +105,6 @@ export default function ResetPasswordPage() {
                 <p className="report-subtitle">Link expired</p>
                 <h2>Request a new reset link</h2>
               </div>
-              <ThemeToggle />
             </div>
 
             <div className="auth-card-actions">
@@ -178,7 +176,6 @@ export default function ResetPasswordPage() {
               <h2>Set your new password</h2>
               <p>Choose a strong password with at least 8 characters.</p>
             </div>
-            <ThemeToggle />
           </div>
 
           {status === 'success' ? (

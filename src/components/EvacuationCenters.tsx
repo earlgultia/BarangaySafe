@@ -4,7 +4,9 @@ import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
 import type { LatLngExpression } from 'leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { fetchEvacuationCenters, type EvacuationCenter } from '../lib/evacuation'
+import { fetchEvacuationCenters, calculateDistance, geocodeAddress, type EvacuationCenter } from '../lib/evacuation'
+import { fetchUserProfile } from '../lib/auth'
+import { useAuth } from '../contexts/AuthContext'
 
 const markerIcon = new L.Icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
@@ -16,37 +18,77 @@ const markerIcon = new L.Icon({
   shadowSize: [41, 41],
 })
 
+const userMarkerIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+})
+
 function MapCenter({ center }: { center: LatLngExpression }) {
   const map = useMap()
   useEffect(() => {
-    map.setView(center, 11)
+    map.setView(center, 13)
   }, [center, map])
   return null
 }
 
 export default function EvacuationCenters() {
+  const { user } = useAuth()
   const [centers, setCenters] = useState<EvacuationCenter[]>([])
   const [loading, setLoading] = useState(false)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null)
 
   useEffect(() => {
-    async function loadCenters() {
+    async function loadData() {
       setLoading(true)
-      const { data, error } = await fetchEvacuationCenters()
+
+      // Fetch evacuation centers
+      const { data: centersData, error: centersError } = await fetchEvacuationCenters()
+      
+      // Fetch user profile for address
+      let userCoords: { lat: number; lon: number } | null = null
+      if (user?.id) {
+        const profile = await fetchUserProfile(user.id)
+        if (profile?.address) {
+          userCoords = await geocodeAddress(profile.address)
+          setUserLocation(userCoords)
+        }
+      }
+
       setLoading(false)
-      if (!error && data) {
-        setCenters(data)
+
+      if (!centersError && centersData) {
+        // Calculate distance for each center if user location is available
+        let sortedCenters = centersData
+        if (userCoords) {
+          sortedCenters = centersData.map((center) => ({
+            ...center,
+            distance: calculateDistance(userCoords.lat, userCoords.lon, center.latitude, center.longitude),
+          }))
+          // Sort by distance
+          sortedCenters.sort((a, b) => (a.distance ?? 999) - (b.distance ?? 999))
+        }
+        setCenters(sortedCenters)
       }
     }
 
-    void loadCenters()
-  }, [])
+    void loadData()
+  }, [user?.id])
 
   const mapCenter = useMemo<LatLngExpression>(() => {
+    // If user location is available, center on user
+    if (userLocation) {
+      return [userLocation.lat, userLocation.lon]
+    }
+    // Otherwise, center on average of all centers
     if (centers.length === 0) return [14.5995, 120.9842]
     const avgLat = centers.reduce((sum, center) => sum + center.latitude, 0) / centers.length
     const avgLon = centers.reduce((sum, center) => sum + center.longitude, 0) / centers.length
     return [avgLat, avgLon]
-  }, [centers])
+  }, [centers, userLocation])
 
   return (
     <section className="evacuation-center-panel">
@@ -102,6 +144,12 @@ export default function EvacuationCenters() {
 
                   <p className="progress-label">{Math.round(ratio * 100)}% full</p>
 
+                  {center.distance !== undefined && (
+                    <div className="distance-info">
+                      <strong>{center.distance.toFixed(1)} km away</strong>
+                    </div>
+                  )}
+
                   <div className="evacuation-card-footer">
                     <a className="directions-link" href={directionsUrl} target="_blank" rel="noreferrer">
                       Get directions
@@ -115,9 +163,16 @@ export default function EvacuationCenters() {
         </div>
 
         <div className="evacuation-map-card">
-          <MapContainer center={mapCenter} zoom={11} className="evacuation-map">
+          <MapContainer center={mapCenter} zoom={13} className="evacuation-map">
             <MapCenter center={mapCenter} />
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {userLocation && (
+              <Marker
+                position={[userLocation.lat, userLocation.lon]}
+                icon={userMarkerIcon}
+                title="Your Location"
+              />
+            )}
             {centers.map((center) => (
               <Marker
                 key={center.id}
