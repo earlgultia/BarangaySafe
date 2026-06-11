@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon-modern.svg'],
       manifest: {
-        name: 'SafeBarangay',
-        short_name: 'SafeBarangay',
+        name: 'eAmping',
+        short_name: 'eAmping',
         description: 'Community safety dashboard with alerts, reports, and mobile PWA support.',
         theme_color: '#7c3aed',
         background_color: '#ffffff',
