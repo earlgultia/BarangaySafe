@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">safebarangay</string>
-    <string name="title_activity_main">safebarangay</string>
+    <string name="app_name">eAmping</string>
+    <string name="title_activity_main">eAmping</string>
     <string name="package_name">com.barangay.safebarangay</string>
     <string name="custom_url_scheme">com.barangay.safebarangay</string>
 </resources>
