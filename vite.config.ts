@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon-modern.svg'],
+      includeAssets: ['app-icon.svg'],
       manifest: {
         name: 'eAmping',
         short_name: 'eAmping',
@@ -19,7 +19,7 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'favicon-modern.svg',
+            src: 'app-icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',
