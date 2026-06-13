@@ -97,7 +97,7 @@ export async function createIncidentReport(report: IncidentReportPayload) {
         latitude: report.latitude,
         longitude: report.longitude,
         location: report.location,
-        status: 'reported',
+        status: 'pending',
       },
     ])
 

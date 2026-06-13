@@ -132,7 +132,7 @@ export default function IncidentReportForm() {
           description,
           photo_urls: imageUrl ? [imageUrl] : null,
           address: address.trim(),
-          status: 'reported',
+          status: 'pending',
           created_at: new Date().toISOString(),
         },
         ...current,
