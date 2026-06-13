@@ -10,6 +10,7 @@ const defaultCoordinates = { latitude: 14.5995, longitude: 120.9842 }
 export default function IncidentReportForm() {
   const { user } = useAuth()
   const [description, setDescription] = useState('')
+  const [incidentType, setIncidentType] = useState('other')
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [address, setAddress] = useState('')
@@ -17,6 +18,7 @@ export default function IncidentReportForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [reports, setReports] = useState<any[]>([])
+  
 
   useEffect(() => {
     if (!user?.id) return
@@ -55,6 +57,11 @@ export default function IncidentReportForm() {
       return
     }
 
+    if (!incidentType) {
+      setErrorMessage('Select an incident type.')
+      return
+    }
+
     if (!address.trim()) {
       setErrorMessage('Enter the incident address.')
       return
@@ -84,16 +91,30 @@ export default function IncidentReportForm() {
     try {
       let imageUrl: string | undefined
       if (file) {
-        imageUrl = await uploadIncidentPhoto(sessionUserId, file)
+        try {
+          const uploaded = await uploadIncidentPhoto(sessionUserId, file)
+          if (uploaded === undefined) {
+            setErrorMessage('Photo upload bucket not available. Continuing without image.')
+            imageUrl = undefined
+          } else {
+            imageUrl = uploaded
+          }
+        } catch (uploadErr) {
+          console.error('Photo upload error:', uploadErr)
+          setErrorMessage((uploadErr as Error).message || 'Photo upload failed. Please try again.')
+          setLoading(false)
+          return
+        }
       }
 
       const { error } = await createIncidentReport({
         user_id: sessionUserId,
+        incident_type: incidentType,
         description: description.trim(),
         image_url: imageUrl,
         latitude: defaultCoordinates.latitude,
         longitude: defaultCoordinates.longitude,
-        address: address.trim(),
+        location: address.trim(),
       })
 
       if (error) {
@@ -102,15 +123,16 @@ export default function IncidentReportForm() {
 
       setStatusMessage('Incident report submitted successfully. Staff will review it shortly.')
       setDescription('')
+      setIncidentType('other')
       setFile(null)
       setAddress('')
       setReports((current) => [
         {
           id: Date.now(),
           description,
-          image_url: imageUrl,
+          photo_urls: imageUrl ? [imageUrl] : null,
           address: address.trim(),
-          status: 'pending',
+          status: 'reported',
           created_at: new Date().toISOString(),
         },
         ...current,
@@ -142,12 +164,32 @@ export default function IncidentReportForm() {
 
       <form className="report-form" onSubmit={handleSubmit}>
         <label className="form-row">
+          <span>Incident type</span>
+          <select
+            value={incidentType}
+            onChange={(event) => setIncidentType(event.target.value)}
+            required
+          >
+            <option value="">Select an incident type</option>
+            <option value="fire">Fire</option>
+            <option value="flooding">Flooding</option>
+            <option value="fallen_trees">Fallen Trees</option>
+            <option value="landslide">Landslide</option>
+            <option value="missing_persons">Missing Persons</option>
+            <option value="damaged_infrastructure">Damaged Infrastructure</option>
+            <option value="medical_emergency">Medical Emergency</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label className="form-row">
           <span>Description</span>
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Describe what happened and why it needs attention."
             rows={5}
+            required
           />
         </label>
 
@@ -190,6 +232,8 @@ export default function IncidentReportForm() {
         {statusMessage && <p className="success-message">{statusMessage}</p>}
         {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
+
+      
 
       {reports.length > 0 ? (
         <div className="report-list">
