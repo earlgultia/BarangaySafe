@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Bell, Camera, MapPin, ShieldCheck } from 'lucide-react'
-import AnnouncementFeed from '../components/AnnouncementFeed'
-import EvacuationCenters from '../components/EvacuationCenters'
 
 export default function ResidentPage() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    console.log('[ResidentPage] mounted')
+    setLoading(false)
+  }, [])
 
   return (
     <main className="page-stack resident-page">
@@ -79,7 +84,7 @@ export default function ResidentPage() {
             <AlertTriangle size={20} />
           </div>
           <div>
-            <strong>12</strong>
+            <strong>{loading ? '—' : 12}</strong>
             <span>Active alerts</span>
           </div>
         </div>
@@ -88,7 +93,7 @@ export default function ResidentPage() {
             <MapPin size={20} />
           </div>
           <div>
-            <strong>8</strong>
+            <strong>{loading ? '—' : 8}</strong>
             <span>Nearby shelters</span>
           </div>
         </div>
@@ -97,36 +102,10 @@ export default function ResidentPage() {
             <Camera size={20} />
           </div>
           <div>
-            <strong>4</strong>
+            <strong>{loading ? '—' : 4}</strong>
             <span>Reports pending</span>
           </div>
         </div>
-      </motion.section>
-
-      <motion.section
-        className="resident-action-row"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: 'easeOut', delay: 0.2 }}
-      >
-        <button type="button" className="mobile-action-card">
-          <Camera size={18} />
-          <div>
-            <strong>Report</strong>
-          </div>
-        </button>
-        <button type="button" className="mobile-action-card">
-          <Bell size={18} />
-          <div>
-            <strong>Alerts</strong>
-          </div>
-        </button>
-        <button type="button" className="mobile-action-card">
-          <MapPin size={18} />
-          <div>
-            <strong>Shelters</strong>
-          </div>
-        </button>
       </motion.section>
 
       <motion.section
@@ -151,9 +130,6 @@ export default function ResidentPage() {
           <span className="card-note">Locate centers instantly.</span>
         </article>
       </motion.section>
-
-      <AnnouncementFeed />
-      <EvacuationCenters />
     </main>
   )
 }
