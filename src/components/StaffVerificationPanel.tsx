@@ -74,9 +74,23 @@ export default function StaffVerificationPanel() {
         throw new Error('Unable to load incident reports.')
       }
 
-      setPendingReports(pending.data ?? [])
-      setVerifiedReports(verified.data ?? [])
-      setResolvedReports(resolved.data ?? [])
+      const normalize = (rows: any[] | null | undefined): IncidentReport[] => {
+        if (!rows) return []
+        return rows.map((r) => ({
+          id: r.id,
+          user_id: r.user_id ?? r.reporter_id ?? '',
+          description: r.description,
+          image_url: Array.isArray(r.photo_urls) && r.photo_urls.length > 0 ? r.photo_urls[0] : r.image_url ?? undefined,
+          latitude: r.latitude,
+          longitude: r.longitude,
+          status: r.status,
+          created_at: r.created_at,
+        }))
+      }
+
+      setPendingReports(normalize(pending.data))
+      setVerifiedReports(normalize(verified.data))
+      setResolvedReports(normalize(resolved.data))
     } catch (error) {
       setError((error as Error).message)
     } finally {
