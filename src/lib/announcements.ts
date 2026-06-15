@@ -1,5 +1,20 @@
 import { supabase } from './supabase'
 
+const contentColumnCandidates = ['content', 'message'] as const
+
+type AnnouncementRow = Record<string, unknown> & {
+  id?: number
+  title?: string
+  body?: string
+  message?: string
+  content?: string
+  details?: string
+  description?: string
+  pinned?: boolean
+  created_at?: string
+  updated_at?: string
+}
+
 export type Announcement = {
   id: number
   title: string
@@ -9,14 +24,40 @@ export type Announcement = {
   updated_at: string
 }
 
-export async function fetchAnnouncements() {
-  const { data, error } = await supabase
-    .from('announcements')
-    .select('id, title, body, pinned, created_at, updated_at')
-    .order('pinned', { ascending: false })
-    .order('created_at', { ascending: false })
+function normalizeAnnouncement(row: AnnouncementRow): Announcement {
+  const body = ['content', 'message', 'body', 'details', 'description']
+    .map((column) => row[column as keyof AnnouncementRow])
+    .find((value): value is string => typeof value === 'string' && value.trim().length > 0) ?? ''
 
-  return { data, error }
+  return {
+    id: Number(row.id ?? 0),
+    title: typeof row.title === 'string' ? row.title : '',
+    body,
+    pinned: row.pinned === true,
+    created_at: typeof row.created_at === 'string' ? row.created_at : '',
+    updated_at: typeof row.updated_at === 'string' ? row.updated_at : '',
+  }
+}
+
+export async function fetchAnnouncements() {
+  const { data, error } = await supabase.from('announcements').select('*')
+
+  if (error) {
+    return { data: [] as Announcement[], error }
+  }
+
+  const normalizedData = (data ?? []).map((announcement) => normalizeAnnouncement(announcement as AnnouncementRow))
+  normalizedData.sort((a, b) => {
+    if (Number(a.pinned) !== Number(b.pinned)) {
+      return Number(b.pinned) - Number(a.pinned)
+    }
+
+    const aTime = a.created_at ? Date.parse(a.created_at) : 0
+    const bTime = b.created_at ? Date.parse(b.created_at) : 0
+    return bTime - aTime
+  })
+
+  return { data: normalizedData, error: null }
 }
 
 export async function createAnnouncement(announcement: {
@@ -24,18 +65,28 @@ export async function createAnnouncement(announcement: {
   body: string
   pinned: boolean
 }) {
-  const { data, error } = await supabase
-    .from('announcements')
-    .insert([
-      {
-        title: announcement.title,
-        body: announcement.body,
-        pinned: announcement.pinned,
-      },
-    ])
-    .select()
+  const contentValue = announcement.body?.trim() || announcement.title?.trim() || 'Announcement'
+  const basePayload = {
+    title: announcement.title,
+    ...(typeof announcement.pinned === 'boolean' ? { pinned: announcement.pinned } : {}),
+  }
 
-  return { data, error }
+  let lastError: Error | null = null
+
+  for (const column of contentColumnCandidates) {
+    const { data, error } = await supabase
+      .from('announcements')
+      .insert([{ ...basePayload, [column]: contentValue }])
+      .select('*')
+
+    if (!error && data) {
+      return { data: data.map((row) => normalizeAnnouncement(row as AnnouncementRow)), error: null }
+    }
+
+    lastError = error as Error | null
+  }
+
+  return { data: null, error: lastError }
 }
 
 export async function updateAnnouncement(announcement: {
@@ -43,13 +94,23 @@ export async function updateAnnouncement(announcement: {
   title: string
   body: string
 }) {
-  const { data, error } = await supabase
-    .from('announcements')
-    .update({ title: announcement.title, body: announcement.body })
-    .eq('id', announcement.id)
-    .select()
+  let lastError: Error | null = null
 
-  return { data, error }
+  for (const column of contentColumnCandidates) {
+    const { data, error } = await supabase
+      .from('announcements')
+      .update({ title: announcement.title, [column]: announcement.body?.trim() || announcement.title?.trim() || 'Announcement' })
+      .eq('id', announcement.id)
+      .select('*')
+
+    if (!error && data) {
+      return { data: data.map((row) => normalizeAnnouncement(row as AnnouncementRow)), error: null }
+    }
+
+    lastError = error as Error | null
+  }
+
+  return { data: null, error: lastError }
 }
 
 export async function deleteAnnouncement(id: number) {
@@ -60,7 +121,7 @@ export async function deleteAnnouncement(id: number) {
 export async function toggleAnnouncementPin(id: number, pinned: boolean) {
   const { data, error } = await supabase
     .from('announcements')
-    .update({ pinned })
+    .update({ ...(typeof pinned === 'boolean' ? { pinned } : {}) })
     .eq('id', id)
     .select()
 

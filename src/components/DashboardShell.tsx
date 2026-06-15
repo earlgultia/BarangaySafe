@@ -23,7 +23,13 @@ const navItems = [
   { title: 'Evacuation Centers', path: '/resident/evacuation', icon: MapPin, roles: ['resident'] },
   { title: 'Report Incident', path: '/resident/report', icon: AlertCircle, roles: ['resident'] },
   { title: 'Staff Workspace', path: '/staff', icon: ShieldCheck, roles: ['staff'] },
-  { title: 'Admin Command', path: '/admin', icon: Settings, roles: ['admin'] },
+  { title: 'Admin Dashboard', path: '/admin/dashboard', icon: Settings, roles: ['admin'] },
+  { title: 'Create Alert', path: '/admin/alerts', icon: AlertCircle, roles: ['admin'] },
+  { title: 'Announcement Center', path: '/admin/announcements', icon: Bell, roles: ['admin'] },
+  { title: 'Analytics Dashboard', path: '/admin/analytics', icon: LayoutDashboard, roles: ['admin'] },
+  { title: 'Relief Distribution', path: '/admin/relief', icon: ShieldCheck, roles: ['admin'] },
+  { title: 'Resident Registry', path: '/admin/registry', icon: User, roles: ['admin'] },
+  { title: 'Community Map', path: '/admin/map', icon: MapPin, roles: ['admin'] },
 ]
 
 export default function DashboardShell({ title, children }: DashboardShellProps) {

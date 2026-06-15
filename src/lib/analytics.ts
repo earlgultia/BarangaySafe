@@ -19,7 +19,7 @@ export async function fetchDashboardCounts() {
   const [residentCount, incidentCount, alertCount, centerCount] = await Promise.all([
     supabase.from('residents').select('id', { count: 'exact', head: true }),
     supabase.from('incident_reports').select('id', { count: 'exact', head: true }).neq('status', 'resolved'),
-    supabase.from('emergency_alerts').select('id', { count: 'exact', head: true }).eq('active', true),
+    supabase.from('emergency_alerts').select('id', { count: 'exact', head: true }),
     supabase.from('evacuation_centers').select('id', { count: 'exact', head: true }),
   ])
 

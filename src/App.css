@@ -162,10 +162,7 @@
 /* Logout confirmation modal (SweetAlert-style) */
 .logout-confirm-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,8 +172,8 @@
 }
 
 .logout-confirm-modal {
-  width: 480px;
-  max-width: 100%;
+  width: min(480px, 100%);
+  max-width: calc(100vw - 40px);
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -188,7 +185,7 @@
   justify-content: center;
   gap: 12px;
   text-align: center;
-  margin-top: 500px;
+  margin-top: 750px;
 }
 
 .logout-confirm-modal h3 {
@@ -691,6 +688,34 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.panel-card {
+  display: grid;
+  gap: 8px;
+  padding: 20px 22px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-h);
+}
+
+.panel-card p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
 
 .status-card {

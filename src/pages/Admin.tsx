@@ -1,6 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 import AdminAlertPanel from '../components/AdminAlertPanel'
 import AnnouncementAdminPanel from '../components/AnnouncementAdminPanel'
 import CommunityMap from '../components/CommunityMap'
@@ -9,35 +6,35 @@ import AnalyticsDashboard from '../components/AnalyticsDashboard'
 import ReliefDistributionPanel from '../components/ReliefDistributionPanel'
 
 export default function AdminPage() {
-  const navigate = useNavigate()
-
-  async function handleSignOut() {
-    await supabase.auth.signOut()
-    navigate('/auth/login')
-  }
-
   return (
     <main className="page-stack">
-      <div className="resident-hero">
+      <section id="admin-dashboard" className="resident-hero">
         <div>
           <p className="report-subtitle">Admin Dashboard</p>
           <h2>Emergency and announcement center</h2>
           <p>Create alerts and announcements for the community from a single dashboard.</p>
         </div>
+      </section>
 
-        <button className="signout-button" onClick={handleSignOut}>
-          <LogOut size={16} />
-          <span>Sign out</span>
-        </button>
-      </div>
-
-      <AdminAlertPanel />
-      <AnnouncementAdminPanel />
-      <AnalyticsDashboard />
-      <ReliefDistributionPanel />
+      <section id="create-alert">
+        <AdminAlertPanel />
+      </section>
+      <section id="announcement-center">
+        <AnnouncementAdminPanel />
+      </section>
+      <section id="analytics-dashboard">
+        <AnalyticsDashboard />
+      </section>
+      <section id="relief-distribution">
+        <ReliefDistributionPanel />
+      </section>
       <div className="admin-grid">
-        <ResidentRegistryPanel />
-        <CommunityMap />
+        <section id="resident-registry">
+          <ResidentRegistryPanel />
+        </section>
+        <section id="community-map">
+          <CommunityMap />
+        </section>
       </div>
     </main>
   )

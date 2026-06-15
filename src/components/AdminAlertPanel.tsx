@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Megaphone } from 'lucide-react'
-import { createEmergencyAlert, fetchActiveAlerts, type EmergencyAlert, type EmergencyAlertType } from '../lib/alerts'
+import { Megaphone, Trash2 } from 'lucide-react'
+import { createEmergencyAlert, deleteEmergencyAlert, fetchActiveAlerts, type EmergencyAlert, type EmergencyAlertType } from '../lib/alerts'
 
 const alertTypes: EmergencyAlertType[] = [
   'Typhoon',
@@ -24,6 +24,7 @@ export default function AdminAlertPanel() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [removingId, setRemovingId] = useState<number | null>(null)
 
   async function loadAlerts() {
     const { data, error } = await fetchActiveAlerts()
@@ -65,6 +66,23 @@ export default function AdminAlertPanel() {
     setTitle('')
     setDescription('')
     setCritical(false)
+    await loadAlerts()
+  }
+
+  async function handleRemoveAlert(id: number) {
+    setErrorMessage(null)
+    setStatusMessage(null)
+    setRemovingId(id)
+
+    const { error } = await deleteEmergencyAlert(id)
+    setRemovingId(null)
+
+    if (error) {
+      setErrorMessage(error.message)
+      return
+    }
+
+    setStatusMessage('Alert removed successfully.')
     await loadAlerts()
   }
 
@@ -147,6 +165,16 @@ export default function AdminAlertPanel() {
                 </div>
                 <h4>{alert.title}</h4>
                 <p>{alert.description}</p>
+                <button
+                  type="button"
+                  className="submit-button"
+                  style={{ marginTop: '0.85rem', width: 'fit-content' }}
+                  onClick={() => handleRemoveAlert(alert.id)}
+                  disabled={removingId === alert.id}
+                >
+                  <Trash2 size={16} />
+                  <span>{removingId === alert.id ? 'Removing...' : 'Remove'}</span>
+                </button>
               </article>
             ))}
           </div>

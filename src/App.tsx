@@ -8,6 +8,13 @@ import ResidentPage from './pages/Resident'
 import StaffPage from './pages/Staff'
 import AdminPage from './pages/Admin'
 import AnnouncementFeed from './components/AnnouncementFeed'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import CreateAlertPage from './pages/admin/CreateAlertPage'
+import AnnouncementCenterPage from './pages/admin/AnnouncementCenterPage'
+import AnalyticsDashboardPage from './pages/admin/AnalyticsDashboardPage'
+import ReliefDistributionPage from './pages/admin/ReliefDistributionPage'
+import ResidentRegistryPage from './pages/admin/ResidentRegistryPage'
+import CommunityMapPage from './pages/admin/CommunityMapPage'
 import EvacuationCenters from './components/EvacuationCenters'
 import IncidentReportForm from './components/IncidentReportForm'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -57,11 +64,20 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <DashboardShell title="Admin Dashboard">
-                  <AdminPage />
+                  <Outlet />
                 </DashboardShell>
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<AdminPage />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="alerts" element={<CreateAlertPage />} />
+            <Route path="announcements" element={<AnnouncementCenterPage />} />
+            <Route path="analytics" element={<AnalyticsDashboardPage />} />
+            <Route path="relief" element={<ReliefDistributionPage />} />
+            <Route path="registry" element={<ResidentRegistryPage />} />
+            <Route path="map" element={<CommunityMapPage />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         </BrowserRouter>
