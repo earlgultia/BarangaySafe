@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Landing from './pages/Landing'
 import LoginPage from './pages/auth/Login'
 import RegisterPage from './pages/auth/Register'
@@ -28,7 +28,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
+        <HashRouter>
         <PwaInstallPrompt />
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -82,7 +82,7 @@ export default function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </AuthProvider>
     </ThemeProvider>
   )
