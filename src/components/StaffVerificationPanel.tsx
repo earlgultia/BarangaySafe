@@ -29,6 +29,7 @@ type IncidentReport = {
   image_url?: string
   latitude: number
   longitude: number
+  location?: string | null
   status: 'pending' | 'verified' | 'resolved' | 'rejected'
   created_at: string
 }
@@ -83,6 +84,7 @@ export default function StaffVerificationPanel() {
           image_url: Array.isArray(r.photo_urls) && r.photo_urls.length > 0 ? r.photo_urls[0] : r.image_url ?? undefined,
           latitude: r.latitude,
           longitude: r.longitude,
+          location: r.location ?? null,
           status: r.status,
           created_at: r.created_at,
         }))
@@ -222,7 +224,7 @@ export default function StaffVerificationPanel() {
                 <div className="report-location">
                   <Circle size={14} />
                   <span>
-                    {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                    {report.location ? report.location : `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`}
                   </span>
                 </div>
                 {report.image_url ? (

@@ -12,6 +12,13 @@ export type IncidentReportPayload = {
   location?: string
 }
 
+export type IncidentReportUpdatePayload = {
+  id: number
+  incident_type: string
+  description: string
+  location?: string
+}
+
 export async function uploadIncidentPhoto(userId: string, file: File) {
   const safeFileName = file.name.replace(/\s+/g, '-')
   const filePath = `incident_reports/${userId}/${Date.now()}-${safeFileName}`
@@ -109,7 +116,7 @@ export async function fetchIncidentReportsForUser(userId: string) {
   const filter = `reporter_id.eq.${userId},user_id.eq.${userId}`
   const { data, error } = await supabase
     .from('incident_reports')
-    .select('id, description, photo_urls, latitude, longitude, status, created_at')
+    .select('id, incident_type, description, photo_urls, latitude, longitude, location, status, created_at')
     .or(filter)
     .order('created_at', { ascending: false })
 
@@ -119,11 +126,30 @@ export async function fetchIncidentReportsForUser(userId: string) {
 export async function fetchIncidentReportsByStatus(status: string) {
   const { data, error } = await supabase
     .from('incident_reports')
-    .select('id, reporter_id, description, photo_urls, latitude, longitude, status, created_at')
+    .select('id, reporter_id, description, photo_urls, latitude, longitude, location, status, created_at')
     .eq('status', status)
     .order('created_at', { ascending: false })
 
   return { data, error }
+}
+
+export async function updateIncidentReport(report: IncidentReportUpdatePayload) {
+  const { data, error } = await supabase
+    .from('incident_reports')
+    .update({
+      incident_type: report.incident_type,
+      description: report.description,
+      location: report.location ?? null,
+    })
+    .eq('id', report.id)
+    .select()
+
+  return { data, error }
+}
+
+export async function deleteIncidentReport(reportId: number) {
+  const { error } = await supabase.from('incident_reports').delete().eq('id', reportId)
+  return { error }
 }
 
 export async function updateIncidentReportStatus(reportId: number, status: string) {

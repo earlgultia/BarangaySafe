@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 const contentColumnCandidates = ['content', 'message'] as const
 
 type AnnouncementRow = Record<string, unknown> & {
-  id?: number
+  id?: string | number
   title?: string
   body?: string
   message?: string
@@ -16,7 +16,7 @@ type AnnouncementRow = Record<string, unknown> & {
 }
 
 export type Announcement = {
-  id: number
+  id: string
   title: string
   body: string
   pinned: boolean
@@ -29,8 +29,10 @@ function normalizeAnnouncement(row: AnnouncementRow): Announcement {
     .map((column) => row[column as keyof AnnouncementRow])
     .find((value): value is string => typeof value === 'string' && value.trim().length > 0) ?? ''
 
+  const idValue = typeof row.id === 'string' ? row.id : typeof row.id === 'number' ? String(row.id) : ''
+
   return {
-    id: Number(row.id ?? 0),
+    id: idValue,
     title: typeof row.title === 'string' ? row.title : '',
     body,
     pinned: row.pinned === true,
@@ -90,7 +92,7 @@ export async function createAnnouncement(announcement: {
 }
 
 export async function updateAnnouncement(announcement: {
-  id: number
+  id: string
   title: string
   body: string
 }) {
@@ -113,12 +115,16 @@ export async function updateAnnouncement(announcement: {
   return { data: null, error: lastError }
 }
 
-export async function deleteAnnouncement(id: number) {
+export async function deleteAnnouncement(id: string) {
+  if (!id) {
+    return { error: new Error('Invalid announcement id') }
+  }
+
   const { error } = await supabase.from('announcements').delete().eq('id', id)
   return { error }
 }
 
-export async function toggleAnnouncementPin(id: number, pinned: boolean) {
+export async function toggleAnnouncementPin(id: string, pinned: boolean) {
   const { data, error } = await supabase
     .from('announcements')
     .update({ ...(typeof pinned === 'boolean' ? { pinned } : {}) })

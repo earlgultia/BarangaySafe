@@ -20,8 +20,8 @@ export default function AnnouncementAdminPanel() {
   const [body, setBody] = useState('')
   const [pinned, setPinned] = useState(false)
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [editDrafts, setEditDrafts] = useState<Record<number, EditDraft>>({})
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editDrafts, setEditDrafts] = useState<Record<string, EditDraft>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -67,7 +67,7 @@ export default function AnnouncementAdminPanel() {
     await loadAnnouncements()
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: string) {
     setErrorMessage(null)
     setIsLoading(true)
     const { error } = await deleteAnnouncement(id)
@@ -79,7 +79,7 @@ export default function AnnouncementAdminPanel() {
     await loadAnnouncements()
   }
 
-  async function handlePin(id: number, value: boolean) {
+  async function handlePin(id: string, value: boolean) {
     setErrorMessage(null)
     setIsLoading(true)
     const { error } = await toggleAnnouncementPin(id, value)
@@ -99,7 +99,7 @@ export default function AnnouncementAdminPanel() {
     }))
   }
 
-  async function handleUpdate(id: number) {
+  async function handleUpdate(id: string) {
     const draft = editDrafts[id]
     if (!draft || !draft.title.trim() || !draft.body.trim()) {
       setErrorMessage('Announcement title and body cannot be empty.')
