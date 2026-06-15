@@ -68,15 +68,25 @@ export default function AnnouncementAdminPanel() {
   }
 
   async function handleDelete(id: string) {
+    if (!id) {
+      setErrorMessage('This announcement could not be deleted because its ID is missing.')
+      return
+    }
+
     setErrorMessage(null)
+    setStatusMessage(null)
     setIsLoading(true)
     const { error } = await deleteAnnouncement(id)
     setIsLoading(false)
+
     if (error) {
       setErrorMessage(error.message)
       return
     }
-    await loadAnnouncements()
+
+    setAnnouncements((current) => current.filter((announcement) => announcement.id !== id))
+    setStatusMessage('Announcement removed successfully.')
+    setEditingId((current) => (current === id ? null : current))
   }
 
   async function handlePin(id: string, value: boolean) {
