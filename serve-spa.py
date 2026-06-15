@@ -7,7 +7,7 @@ import http.server
 import socketserver
 import os
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 PORT = 8080
 DIST_DIR = Path(__file__).parent / "dist"
@@ -19,7 +19,14 @@ class SPARequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         # Parse the request path
         parsed_path = urlparse(self.path)
-        file_path = DIST_DIR / parsed_path.path.lstrip('/')
+        safe_path = parsed_path.path or '/'
+
+        try:
+            safe_path = unquote(safe_path)
+        except Exception:
+            safe_path = '/'
+
+        file_path = DIST_DIR / safe_path.lstrip('/')
         
         # If it's a request for a file that exists, serve it
         if file_path.is_file():

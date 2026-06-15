@@ -228,6 +228,7 @@ export default function IncidentReportForm() {
 
   async function handleDeleteReport(reportId: number) {
     setErrorMessage(null)
+    setStatusMessage(null)
     setLoading(true)
     const { error } = await deleteIncidentReport(reportId)
     setLoading(false)
@@ -237,7 +238,9 @@ export default function IncidentReportForm() {
       return
     }
 
-    await loadReports()
+    setReports((current) => current.filter((report) => report.id !== reportId))
+    setEditingId((current) => (current === reportId ? null : current))
+    setStatusMessage('Incident report removed successfully.')
   }
 
   return (

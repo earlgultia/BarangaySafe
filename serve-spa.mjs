@@ -17,14 +17,21 @@ const DIST_DIR = path.join(__dirname, 'dist');
 
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
-  let pathname = parsedUrl.pathname;
+  let pathname = parsedUrl.pathname || '/';
+
+  try {
+    pathname = decodeURIComponent(pathname);
+  } catch {
+    pathname = '/';
+  }
 
   // Remove trailing slash except for root
   if (pathname !== '/' && pathname.endsWith('/')) {
     pathname = pathname.slice(0, -1);
   }
 
-  let filePath = path.join(DIST_DIR, pathname);
+  const safePath = pathname.replace(/^\.\.(?:\/|$)/, '/');
+  let filePath = path.join(DIST_DIR, safePath);
 
   // Check if it's a file
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
