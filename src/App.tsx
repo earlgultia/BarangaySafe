@@ -19,6 +19,7 @@ import EvacuationCenters from './components/EvacuationCenters'
 import IncidentReportForm from './components/IncidentReportForm'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardShell from './components/DashboardShell'
+import PwaInstallPrompt from './components/PwaInstallPrompt'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import './App.css'
@@ -28,6 +29,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+        <PwaInstallPrompt />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/auth/login" element={<LoginPage />} />
